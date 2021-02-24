@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const NavBarContainer = styled.div`
     width: 100%;
-    height: 10vh;
+    height: 6vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,7 +26,7 @@ const TitleContainer = styled.div`
 `;
 
 const LinkContainer = styled.div`
-    width 70%;
+    width 50%;
     display: flex;
     justify-content: flex-end;
     
