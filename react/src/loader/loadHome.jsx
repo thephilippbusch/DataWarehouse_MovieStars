@@ -21,7 +21,7 @@ const LoadHome = (props) => {
             }
         }
         fetchData();
-    }, []);
+    });
     
     return data.fetched && !data.isFetching ? (
         <Home data={data.fetched} />
