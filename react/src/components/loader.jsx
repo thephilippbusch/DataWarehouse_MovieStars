@@ -10,13 +10,36 @@ const FullScreen = styled.div`
     align-items: center;
 `;
 
+const ComponentSize = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
 const Loader = (props) => { 
 
-    return (props.size === 'fullscreen') && (
-        <FullScreen>
-            <CircularProgress />
-        </FullScreen>
-    )
+    switch(props.size) {
+        case 'fullscren':
+            return(
+                <FullScreen>
+                    <CircularProgress />
+                </FullScreen>
+            )
+        case 'component':
+            return(
+                <ComponentSize>
+                    <CircularProgress />
+                </ComponentSize>
+            )
+        default:
+            return(
+                <ComponentSize>
+                    <CircularProgress />
+                </ComponentSize>
+            )
+    }
 }
 
 export default Loader;
