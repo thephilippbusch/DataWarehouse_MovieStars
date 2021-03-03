@@ -11,18 +11,18 @@ export const global = {
         },
         "background": {
           "dark": "#111111",
-          "light": "#FFFFFF"
-        },
-        "background-back": {
-          "dark": "#111111",
           "light": "#EEEEEE"
         },
-        "background-front": {
+        "background-back": {
           "dark": "#222222",
+          "light": "#DDDDDD"
+        },
+        "background-front": {
+          "dark": "#000000",
           "light": "#FFFFFF"
         },
         "background-contrast": {
-          "dark": "#FFFFFF11",
+          "dark": "#EEEEEE11",
           "light": "#11111111"
         },
         "text": {

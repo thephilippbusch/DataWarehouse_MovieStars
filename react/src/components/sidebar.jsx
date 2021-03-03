@@ -9,7 +9,7 @@ const SideBar = () => {
 
 
     return(
-        <Sidebar width={{max: "medium", min: "15%"}} height="100%" background="brand"
+        <Sidebar width={{max: "medium", min: "15%"}} height="100%" background="background-front"
             header={
                 <Heading margin="none">Sidebar</Heading>
             }

@@ -1,6 +1,6 @@
 import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
+import Spinner from './spinner';
 
 const FullScreen = styled.div`
     width: 100%;
@@ -24,19 +24,19 @@ const Loader = (props) => {
         case 'fullscren':
             return(
                 <FullScreen>
-                    <CircularProgress />
+                    <Spinner />
                 </FullScreen>
             )
         case 'component':
             return(
                 <ComponentSize>
-                    <CircularProgress />
+                    <Spinner />
                 </ComponentSize>
             )
         default:
             return(
                 <ComponentSize>
-                    <CircularProgress />
+                    <Spinner />
                 </ComponentSize>
             )
     }

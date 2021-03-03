@@ -1,67 +1,140 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-const NavBarContainer = styled.div`
-    width: 100%;
-    height: 6vh;
-    display: flex;
-    justify-content: space-between;
+import {
+    Header,
+    Box,
+    Avatar,
+    DropButton,
+    Select,
+    Text
+} from 'grommet';
+
+import {
+    UserFemale as UserFemaleIcon,
+    Logout as LogoutIcon,
+    User as UserIcon,
+    Paint as ThemeIcon
+} from 'grommet-icons';
+
+const Title = styled.h2`
+    margin: none;
+    letter-spacing: 7px;
+    color: white;
     align-items: center;
-    background-color: rgb(0, 60, 0);
-`;
 
-const TitleContainer = styled.div`
-    width: 30%;
-
-    .titleLink {
-        margin-left: 50px;
-        letter-spacing: 0.8em;
-        font-family: helvetica, Verdana;
-        font-size: 20px;
-        font-weight: bold;
-        color: white;
+    .link {
         text-decoration: none;
+        color: white;
     }
 `;
 
-const LinkContainer = styled.div`
-    width 50%;
+const LinkBox = styled.div`
     display: flex;
-    justify-content: flex-end;
-    
-    ul {
-        .linkItem {
-            margin: 0px 10px 0px 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 
-            a {
-                text-decoration: none;
-                color: white;
-                font-size: 15px;
-                font-family: helvetica, Verdana;
-            }
+    .link {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
 
-            a:hover {
-                color: white;
-            }
+        :hover {
+            text-decoration: underline white;
+            text-decoration-thickness: 3px;
         }
     }
 `;
 
-const NavBar = () => {
+const NavBar = (props) => {
+    const [theme, setTheme] = useState(props.currentTheme);
+    const history = useHistory();
+
+    const toggleTheme = (option) => {
+        console.log(option);
+        setTheme(option);
+        props.setGlobalTheme(option);
+    }
 
     return (
-        <NavBarContainer >
-            <TitleContainer>
-                <Link to="/">Moviestars</Link>
-            </TitleContainer>
-            <LinkContainer>
-                <ul>
-                    <li className="linkItem"><Link to="/">Home</Link></li>
-                    <li className="linkItem"><Link to="/about">About</Link></li>
-                </ul>
-            </LinkContainer>
-        </NavBarContainer>
+        <Header
+            background="brand"
+            height="6vh"
+        >
+            <Box margin={{left: "medium"}}>
+                <Title><Link className="link" to="/home">MOVIESTARS</Link></Title>
+            </Box>
+            <Box width="medium" pad={{horizontal: "medium"}}>
+                <LinkBox>
+                    <Link className="link" to="/about">About</Link>
+                    <Link className="link" to="/news">News</Link>
+                    <DropButton 
+                        dropAlign={{right: 'right', top: 'bottom'}}
+                        label={
+                            <Avatar background="background-back" onClick={() => console.log("Hello!")}>
+                                <UserFemaleIcon color="accent-4"/>
+                            </Avatar>
+                            }
+                        hoverIndicator={false}
+                        dropContent={
+                            <Box width="280px" pad="small" gap="small">
+                                <Box 
+                                    direction="row"
+                                    justify="start"
+                                    alignSelf="start"
+                                    pad={{right: "small"}}
+                                    onClick={() => {
+                                        history.push('/profile');
+                                    }}
+                                >
+                                    <Box pad="xsmall">
+                                        <UserIcon size="small"/>
+                                    </Box>
+                                    Profil
+                                </Box>
+                                <Box 
+                                    direction="row"
+                                    justify="start"
+                                    alignSelf="start" 
+                                    pad={{right: "small"}} 
+                                    onClick={() => {
+                                        history.push('/profile');
+                                    }}
+                                >
+                                    <Box pad="xsmall">
+                                        <LogoutIcon size="small"/>
+                                    </Box>
+                                    Logout
+                                </Box>
+                                <Box 
+                                    direction="row"
+                                    justify="start"
+                                    alignSelf="start"
+                                    pad={{right: "small"}}
+                                    align="center"
+                                >
+                                    <Box pad="xsmall">
+                                        <ThemeIcon size="small"/>
+                                    </Box>
+                                    Theme:
+                                    <Select
+                                        plain
+                                        size="medium"
+                                        options={['dark', 'light']}
+                                        value={theme}
+                                        onChange={({ option }) => toggleTheme(option)}
+                                    />
+                                </Box>
+                            </Box>
+                        }
+                    >
+                    </DropButton>
+                </LinkBox>
+            </Box>
+        </Header>
     )
 }
 

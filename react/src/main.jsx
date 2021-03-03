@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -11,6 +11,7 @@ import { global } from './styles/globalStylings';
 import LoadHome from './loader/loadHome';
 import NavBar from './components/navbar';
 import About from './pages/about';
+import News from './pages/news';
 import SideBar from './components/sidebar';
 import Footer from './components/footer';
 
@@ -25,11 +26,12 @@ const MainContainer = styled.div`
 `;
 
 const Main = () => {
+  const [themeSetting, setThemeSetting] = useState('light');
 
   return (
-    <Grommet theme={global}>
+    <Grommet theme={global} themeMode={themeSetting}>
       <Router>
-        <NavBar />
+        <NavBar currentTheme={themeSetting} setGlobalTheme={option => setThemeSetting(option)}/>
         
         <MainContainer>
           <SideBar />
@@ -40,6 +42,9 @@ const Main = () => {
             </Route>
             <Route path="/about">
               <About />
+            </Route>
+            <Route path="/news">
+              <News />
             </Route>
           </Switch>
         </MainContainer>
