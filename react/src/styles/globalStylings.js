@@ -6,8 +6,8 @@ export const global = {
     "global": {
       "colors": {
         "brand": {
-          "dark": "#7700cc",
-          "light": "#6600cc"
+          "dark": "#0d8c08",
+          "light": "#0ea608"
         },
         "background": {
           "dark": "#111111",

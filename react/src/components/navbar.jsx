@@ -8,7 +8,8 @@ import {
     Avatar,
     RadioButtonGroup,
     DropButton,
-    Anchor
+    Anchor,
+    Image
 } from 'grommet';
 
 import {
@@ -119,7 +120,14 @@ const NavBar = (props) => {
                         <Anchor margin={{top: "xsmall"}}><MenuIcon onClick={() => props.setSidebarStatus(true)} /></Anchor>
                     )}
                 </Box>
-                <Title><TitleLink to="/home">Nicki</TitleLink></Title>
+                <Title><TitleLink to="/home">
+                    <Box height="small" width="small">
+                        <Image
+                            fit="contain"
+                            src="moviestars-logo.png"
+                        />
+                    </Box>
+                </TitleLink></Title>
             </Box>
             <Box width="medium" pad={{horizontal: "medium"}}>
                 <Box width="100%" direction="row" justify="between" align="center">
