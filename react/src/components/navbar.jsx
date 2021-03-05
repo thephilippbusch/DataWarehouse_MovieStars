@@ -123,7 +123,7 @@ const NavBar = (props) => {
             </Box>
             <Box width="medium" pad={{horizontal: "medium"}}>
                 <Box width="100%" direction="row" justify="between" align="center">
-                    <NavBarLink to="/about">About</NavBarLink>
+                    <NavBarLink to="/about">AboutYou</NavBarLink>
                     <NavBarLink to="/news">Neuigkeiten</NavBarLink>
                     <DropButton
                         dropAlign={{right: 'right', top: 'bottom'}}
