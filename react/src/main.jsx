@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -26,15 +26,23 @@ const MainContainer = styled.div`
 `;
 
 const Main = () => {
-  const [themeSetting, setThemeSetting] = useState('light');
+  const [themeSetting, setThemeSetting] = useState(
+    localStorage.getItem(`theme`) ? localStorage.getItem(`theme`) : `light`
+  );
+  const [sidebarStatus, setSidebarStatus] = useState(false);
 
   return (
     <Grommet theme={global} themeMode={themeSetting}>
       <Router>
-        <NavBar currentTheme={themeSetting} setGlobalTheme={option => setThemeSetting(option)}/>
+        <NavBar 
+          currentTheme={themeSetting}
+          setGlobalTheme={option => setThemeSetting(option)}
+          sidebarStatus={sidebarStatus}
+          setSidebarStatus={status =>setSidebarStatus(status)}
+        />
         
         <MainContainer>
-          <SideBar />
+          <SideBar status={sidebarStatus}/>
 
           <Switch>
             <Route exact path="/">

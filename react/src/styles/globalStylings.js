@@ -87,8 +87,12 @@ export const global = {
       },
       "drop": {
         "border": {
-          "radius": "0px"
-        }
+          "radius": "10px"
+        },
+        "background": { 
+          dark: 'background-back', 
+          light: 'background-back' 
+        },
       },
       "borderSize": {
         "xsmall": "1px",
@@ -167,7 +171,7 @@ export const global = {
     "button": {
       "border": {
         "width": "2px",
-        "radius": "0px"
+        "radius": "5px"
       },
       "padding": {
         "vertical": "4px",

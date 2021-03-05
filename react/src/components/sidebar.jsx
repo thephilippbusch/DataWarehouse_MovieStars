@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
     Heading,
-    Sidebar
+    Sidebar,
+    Collapsible
 } from 'grommet';
 
-const SideBar = () => {
+const SideBar = (props) => {
 
+    useEffect(() => {
+        console.log(props.status)
+    }, [props.status]);
 
     return(
-        <Sidebar width={{max: "medium", min: "15%"}} height="100%" background="background-front"
-            header={
-                <Heading margin="none">Sidebar</Heading>
-            }
-        >
-            <Heading margin="none" level="5">I'm a Sidebar Item</Heading>
-        </Sidebar>
+        <Collapsible direction="horizontal" open={props.status}>
+            <Sidebar width="medium" height="100%" background="background-front"
+                header={
+                    <Heading margin="none">Sidebar</Heading>
+                }
+            >
+                <Heading margin="none" level="5">I'm a Sidebar Item</Heading>
+            </Sidebar>
+        </Collapsible>
     )
 }
 

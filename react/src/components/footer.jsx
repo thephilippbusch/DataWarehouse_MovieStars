@@ -20,7 +20,8 @@ const Footer = () => {
             <Anchor 
                 size="small"
                 label="GitHub" 
-                href="" 
+                target="_blank"
+                href="https://github.com/thephilippbusch/DataWarehouse_MovieStars" 
                 icon={<Github size="small" />} 
                 color="text-weak" 
                 decoration="none"    

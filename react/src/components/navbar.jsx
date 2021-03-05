@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 
@@ -6,16 +6,20 @@ import {
     Header,
     Box,
     Avatar,
+    RadioButtonGroup,
     DropButton,
-    Select,
-    Text
+    Anchor
 } from 'grommet';
 
 import {
     UserFemale as UserFemaleIcon,
     Logout as LogoutIcon,
     User as UserIcon,
-    Paint as ThemeIcon
+    Paint as ThemeIcon,
+    Sun as SunIcon,
+    Moon as MoonIcon,
+    Menu as MenuIcon,
+    Close as CloseIcon
 } from 'grommet-icons';
 
 const Title = styled.h2`
@@ -23,116 +27,113 @@ const Title = styled.h2`
     letter-spacing: 7px;
     color: white;
     align-items: center;
+`;
 
-    .link {
-        text-decoration: none;
-        color: white;
+const TitleLink = styled(Link)`
+    text-decoration: none;
+    color: white;
+`;
+
+const NavBarLink = styled(Link)`
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+
+    :hover {
+        text-decoration: underline white;
+        text-decoration-thickness: 3px;
     }
 `;
 
-const LinkBox = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-    .link {
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
-
-        :hover {
-            text-decoration: underline white;
-            text-decoration-thickness: 3px;
-        }
-    }
-`;
-
-const NavBar = (props) => {
+const DropItems = (props) => {
     const [theme, setTheme] = useState(props.currentTheme);
     const history = useHistory();
 
-    const toggleTheme = (option) => {
-        console.log(option);
-        setTheme(option);
-        props.setGlobalTheme(option);
+    useEffect(() => {
+        localStorage.setItem(`theme`, theme);
+        props.setGlobalTheme(theme)
+    }, [theme]);
+
+    const handleLogout = () => {
+        console.log(`Successfully logged out!`)
     }
+
+    return(
+        <Box gap="small" pad="small">
+            <Box direction="row" justify="start" onClick={() => history.push('/profile')}>
+                <Box pad="xsmall">
+                    <UserIcon size="small"/>
+                </Box>
+                Profil
+            </Box>
+            <Box direction="row" justify="start" onClick={() => handleLogout()}>
+                <Box pad="xsmall">
+                    <LogoutIcon size="small"/>
+                </Box>
+                Logout
+            </Box>
+            <Box direction="row" justify="between">
+                <Box pad="xsmall" direction="row" align="center" gap="xsmall" margin={{right: "medium"}}>
+                    <ThemeIcon pad="xsmall" size="small"/>
+                    Theme:
+                </Box>
+                <RadioButtonGroup
+                    name="themeRadio"
+                    direction="row"
+                    gap="xsmall"
+                    options={['light', 'dark']}
+                    value={theme}
+                    onChange={event => setTheme(event.target.value)}
+                >
+                    {(option, { checked, hover }) => {
+                        const Icon = option === 'light' ? SunIcon : MoonIcon;
+                        let background;
+                        if (checked) background = 'brand';
+                        else if (hover) background = 'light-4';
+                        else background = 'light-2';
+                        return (
+                            <Box background={background} pad="xsmall">
+                                <Icon />
+                            </Box>
+                        )
+                    }}
+                </RadioButtonGroup>
+            </Box>
+        </Box>
+    )
+}
+
+const NavBar = (props) => {
+    const[sidebarOpen, setSidebarOpen] = useState(props.sidebarStatus)
 
     return (
         <Header
             background="brand"
             height="6vh"
         >
-            <Box margin={{left: "medium"}}>
-                <Title><Link className="link" to="/home">MOVIESTARS</Link></Title>
+            <Box margin={{left: "medium"}} direction="row" justify="start">
+                <Box alignSelf="center" pad={{right: "small"}}>
+                    {props.sidebarStatus ? (
+                        <Anchor margin={{top: "xsmall"}}><CloseIcon onClick={() => props.setSidebarStatus(false)} /></Anchor>
+                    ) : (
+                        <Anchor margin={{top: "xsmall"}}><MenuIcon onClick={() => props.setSidebarStatus(true)} /></Anchor>
+                    )}
+                </Box>
+                <Title><TitleLink to="/home">MOVIESTARS</TitleLink></Title>
             </Box>
             <Box width="medium" pad={{horizontal: "medium"}}>
-                <LinkBox>
-                    <Link className="link" to="/about">About</Link>
-                    <Link className="link" to="/news">News</Link>
-                    <DropButton 
+                <Box width="100%" direction="row" justify="between" align="center">
+                    <NavBarLink to="/about">About</NavBarLink>
+                    <NavBarLink to="/news">News</NavBarLink>
+                    <DropButton
                         dropAlign={{right: 'right', top: 'bottom'}}
-                        label={
-                            <Avatar background="background-back" onClick={() => console.log("Hello!")}>
-                                <UserFemaleIcon color="accent-4"/>
-                            </Avatar>
-                            }
-                        hoverIndicator={false}
-                        dropContent={
-                            <Box width="280px" pad="small" gap="small">
-                                <Box 
-                                    direction="row"
-                                    justify="start"
-                                    alignSelf="start"
-                                    pad={{right: "small"}}
-                                    onClick={() => {
-                                        history.push('/profile');
-                                    }}
-                                >
-                                    <Box pad="xsmall">
-                                        <UserIcon size="small"/>
-                                    </Box>
-                                    Profil
-                                </Box>
-                                <Box 
-                                    direction="row"
-                                    justify="start"
-                                    alignSelf="start" 
-                                    pad={{right: "small"}} 
-                                    onClick={() => {
-                                        history.push('/profile');
-                                    }}
-                                >
-                                    <Box pad="xsmall">
-                                        <LogoutIcon size="small"/>
-                                    </Box>
-                                    Logout
-                                </Box>
-                                <Box 
-                                    direction="row"
-                                    justify="start"
-                                    alignSelf="start"
-                                    pad={{right: "small"}}
-                                    align="center"
-                                >
-                                    <Box pad="xsmall">
-                                        <ThemeIcon size="small"/>
-                                    </Box>
-                                    Theme:
-                                    <Select
-                                        plain
-                                        size="medium"
-                                        options={['dark', 'light']}
-                                        value={theme}
-                                        onChange={({ option }) => toggleTheme(option)}
-                                    />
-                                </Box>
-                            </Box>
-                        }
+                        dropContent={<DropItems currentTheme={props.currentTheme} setGlobalTheme={props.setGlobalTheme}/>}
                     >
+                        <Avatar background="background-back">
+                            <UserFemaleIcon color="accent-1"/>
+                        </Avatar>
                     </DropButton>
-                </LinkBox>
+                </Box>
             </Box>
         </Header>
     )
