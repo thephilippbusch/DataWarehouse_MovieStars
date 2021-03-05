@@ -119,7 +119,7 @@ const NavBar = (props) => {
                         <Anchor margin={{top: "xsmall"}}><MenuIcon onClick={() => props.setSidebarStatus(true)} /></Anchor>
                     )}
                 </Box>
-                <Title><TitleLink to="/home">MOVIESTARS</TitleLink></Title>
+                <Title><TitleLink to="/home">CLAERCHEN</TitleLink></Title>
             </Box>
             <Box width="medium" pad={{horizontal: "medium"}}>
                 <Box width="100%" direction="row" justify="between" align="center">
