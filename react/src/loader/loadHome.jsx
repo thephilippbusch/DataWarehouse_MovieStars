@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Loader from '../components/loader.jsx';
-import axios from 'axios';
+import React from 'react';
+// import Loader from '../components/loader.jsx';
+// import axios from 'axios';
 import Home from '../pages/home';
 
 const LoadHome = () => {

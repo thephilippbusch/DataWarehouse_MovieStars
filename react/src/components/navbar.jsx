@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
     Header,
     Box,
-    Avatar,
-    RadioButtonGroup,
-    DropButton,
     Anchor,
     Image
 } from 'grommet';
 
 import {
-    UserFemale as UserFemaleIcon,
-    Logout as LogoutIcon,
-    User as UserIcon,
-    Paint as ThemeIcon,
-    Sun as SunIcon,
-    Moon as MoonIcon,
+    // Logout as LogoutIcon,
+    // User as UserIcon,
+    // Paint as ThemeIcon,
+    // Sun as SunIcon,
+    // Moon as MoonIcon,
     Menu as MenuIcon,
     Close as CloseIcon
 } from 'grommet-icons';
@@ -35,74 +31,74 @@ const TitleLink = styled(Link)`
     color: white;
 `;
 
-const NavBarLink = styled(Link)`
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
+// const NavBarLink = styled(Link)`
+//     text-decoration: none;
+//     color: white;
+//     font-weight: bold;
 
-    :hover {
-        text-decoration: underline white;
-        text-decoration-thickness: 3px;
-    }
-`;
+//     :hover {
+//         text-decoration: underline white;
+//         text-decoration-thickness: 3px;
+//     }
+// `;
 
-const DropItems = (props) => {
-    const [theme, setTheme] = useState(props.currentTheme);
-    const history = useHistory();
+// const DropItems = (props) => {
+//     const [theme, setTheme] = useState(props.currentTheme);
+//     const history = useHistory();
 
-    useEffect(() => {
-        localStorage.setItem(`theme`, theme);
-        props.setGlobalTheme(theme)
-    }, [theme, props]);
+//     useEffect(() => {
+//         localStorage.setItem(`theme`, theme);
+//         props.setGlobalTheme(theme)
+//     }, [theme, props]);
 
-    const handleLogout = () => {
-        console.log(`Successfully logged out!`)
-    }
+//     const handleLogout = () => {
+//         console.log(`Successfully logged out!`)
+//     }
 
-    return(
-        <Box gap="small" pad="small">
-            <Box direction="row" justify="start" onClick={() => history.push('/profile')}>
-                <Box pad="xsmall">
-                    <UserIcon size="small"/>
-                </Box>
-                Profil
-            </Box>
-            <Box direction="row" justify="start" onClick={() => handleLogout()}>
-                <Box pad="xsmall">
-                    <LogoutIcon size="small"/>
-                </Box>
-                Logout
-            </Box>
-            <Box direction="row" justify="between">
-                <Box pad="xsmall" direction="row" align="center" gap="xsmall" margin={{right: "medium"}}>
-                    <ThemeIcon pad="xsmall" size="small"/>
-                    Theme:
-                </Box>
-                <RadioButtonGroup
-                    name="themeRadio"
-                    direction="row"
-                    gap="xsmall"
-                    options={['light', 'dark']}
-                    value={theme}
-                    onChange={event => setTheme(event.target.value)}
-                >
-                    {(option, { checked, hover }) => {
-                        const Icon = option === 'light' ? SunIcon : MoonIcon;
-                        let background;
-                        if (checked) background = 'brand';
-                        else if (hover) background = 'light-4';
-                        else background = 'light-2';
-                        return (
-                            <Box background={background} pad="xsmall">
-                                <Icon />
-                            </Box>
-                        )
-                    }}
-                </RadioButtonGroup>
-            </Box>
-        </Box>
-    )
-}
+//     return(
+//         <Box gap="small" pad="small">
+//             <Box direction="row" justify="start" onClick={() => history.push('/profile')}>
+//                 <Box pad="xsmall">
+//                     <UserIcon size="small"/>
+//                 </Box>
+//                 Profil
+//             </Box>
+//             <Box direction="row" justify="start" onClick={() => handleLogout()}>
+//                 <Box pad="xsmall">
+//                     <LogoutIcon size="small"/>
+//                 </Box>
+//                 Logout
+//             </Box>
+//             <Box direction="row" justify="between">
+//                 <Box pad="xsmall" direction="row" align="center" gap="xsmall" margin={{right: "medium"}}>
+//                     <ThemeIcon pad="xsmall" size="small"/>
+//                     Theme:
+//                 </Box>
+//                 <RadioButtonGroup
+//                     name="themeRadio"
+//                     direction="row"
+//                     gap="xsmall"
+//                     options={['light', 'dark']}
+//                     value={theme}
+//                     onChange={event => setTheme(event.target.value)}
+//                 >
+//                     {(option, { checked, hover }) => {
+//                         const Icon = option === 'light' ? SunIcon : MoonIcon;
+//                         let background;
+//                         if (checked) background = 'brand';
+//                         else if (hover) background = 'light-4';
+//                         else background = 'light-2';
+//                         return (
+//                             <Box background={background} pad="xsmall">
+//                                 <Icon />
+//                             </Box>
+//                         )
+//                     }}
+//                 </RadioButtonGroup>
+//             </Box>
+//         </Box>
+//     )
+// }
 
 const NavBar = (props) => {
 
