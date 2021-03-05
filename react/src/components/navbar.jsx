@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 
@@ -53,7 +53,7 @@ const DropItems = (props) => {
     useEffect(() => {
         localStorage.setItem(`theme`, theme);
         props.setGlobalTheme(theme)
-    }, [theme]);
+    }, [theme, props]);
 
     const handleLogout = () => {
         console.log(`Successfully logged out!`)
@@ -105,15 +105,14 @@ const DropItems = (props) => {
 }
 
 const NavBar = (props) => {
-    const[sidebarOpen, setSidebarOpen] = useState(props.sidebarStatus)
 
     return (
         <Header
             background="brand"
             height="6vh"
         >
-            <Box margin={{left: "medium"}} direction="row" justify="start">
-                <Box alignSelf="center" pad={{right: "small"}}>
+            <Box direction="row" justify="start">
+                <Box alignSelf="center" width="xsmall" direction="row" justify="center" alig="center">
                     {props.sidebarStatus ? (
                         <Anchor margin={{top: "xsmall"}}><CloseIcon onClick={() => props.setSidebarStatus(false)} /></Anchor>
                     ) : (
@@ -130,9 +129,7 @@ const NavBar = (props) => {
                 </TitleLink></Title>
             </Box>
             <Box width="medium" pad={{horizontal: "medium"}}>
-                <Box width="100%" direction="row" justify="between" align="center">
-                    <NavBarLink to="/about">AboutYou</NavBarLink>
-                    <NavBarLink to="/news">Neuigkeiten</NavBarLink>
+                {/* <Box width="100%" direction="row" justify="between" align="center">
                     <DropButton
                         dropAlign={{right: 'right', top: 'bottom'}}
                         dropContent={<DropItems currentTheme={props.currentTheme} setGlobalTheme={props.setGlobalTheme}/>}
@@ -141,7 +138,7 @@ const NavBar = (props) => {
                             <UserFemaleIcon color="accent-1"/>
                         </Avatar>
                     </DropButton>
-                </Box>
+                </Box> */}
             </Box>
         </Header>
     )
