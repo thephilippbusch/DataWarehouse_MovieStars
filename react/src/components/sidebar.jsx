@@ -1,57 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react' 
+import { useHistory } from 'react-router-dom'
 
 import {
-    Sidebar,
-    Collapsible,
     Box,
-    Anchor,
-    Avatar
+    Avatar,
+    RadioButtonGroup
 } from 'grommet';
 
 import {
-    AddCircle as AddIcon,
-    Trash as TrashIcon,
-    Calculator as CalcIcon,
-    UserFemale as UserFemaleIcon
+    UserFemale as UserFemaleIcon,
+    Home as HomeIcon,
+    Database as DatabaseIcon,
+    Search as SearchIcon
 } from 'grommet-icons';
 
 const SideBar = (props) => {
+    const [selectedPage, setSelectedPage] = useState(props.page)
+    const history = useHistory();
+
+    useEffect(() => {
+        setSelectedPage(props.page.params.page)
+    }, [props.page])
 
     return(
         <Box direction="row" justify="start">
-            <Box background="background-front" direction="column" fill="vertical" justify="between">
+            <Box background="background-front" direction="column" fill="vertical" justify="between" width="xsmall">
                 <Box>
-                    <Box width="xsmall" height="xsmall" justify="center" align="center">
-                        <Anchor onClick={() => console.log("Calculate Movie outcome")}><CalcIcon color="brand"/></Anchor>
-                    </Box>
-                    <Box width="xsmall" height="xsmall" justify="center" align="center">
-                        <Anchor onClick={() => console.log("Add Element")}><AddIcon color="brand"/></Anchor>
-                    </Box>
-                    <Box width="xsmall" height="xsmall" justify="center" align="center">
-                        <Anchor onClick={() => console.log("Delete Element")}><TrashIcon color="brand"/></Anchor>
-                    </Box>
+                    <RadioButtonGroup
+                        name="themeRadio"
+                        direction="column"
+                        options={['home', 'manage', 'search']}
+                        gap="none"
+                        value={selectedPage}
+                        onChange={event => setSelectedPage(event.target.value)}
+                    >
+                        {(option, { checked, hover }) => {
+                            let background;
+                            if (checked) background = 'brand';
+                            else if (hover) background = 'background-back';
+                            else background = 'background-front';
+                            return (
+                                <Box 
+                                    background={background}
+                                    width="xsmall" 
+                                    height="xsmall" 
+                                    justify="center" 
+                                    align="center"
+                                    onClick={() => history.push(`/${option}`)}
+                                >
+                                    {option === 'home' && <HomeIcon />}
+                                    {option === 'manage' && <DatabaseIcon />}
+                                    {option === 'search' && <SearchIcon />}
+                                </Box>
+                            )
+                        }}
+                    </RadioButtonGroup>
                 </Box>
                 <Box>
                     <Box width="xsmall" height="xsmall" justify="center" align="center">
-                        <Avatar background="background-back">
-                            <UserFemaleIcon color="accent-1"/>
+                        <Avatar 
+                            background="background-back" 
+                            size="medium"
+                            hoverIndicator={{color: "brand"}} 
+                            onClick={() => history.push('/profile')}
+                        >
+                            <UserFemaleIcon color="text"/>
                         </Avatar>
                     </Box>
                 </Box>
             </Box>
-            <Collapsible direction="horizontal" open={props.status}>
-                <Sidebar width="medium" pad="none" background="background-front">
-                    <Box height="xsmall" justify="center" align="start">
-                        <Anchor onClick={() => console.log("Calculate Movie outcome")}>Moviestar Evaluator</Anchor>
-                    </Box>
-                    <Box height="xsmall" justify="center" align="start">
-                        <Anchor onClick={() => console.log("Add Objects to the Database")}>Add Objects</Anchor>
-                    </Box>
-                    <Box height="xsmall" justify="center" align="start">
-                        <Anchor onClick={() => console.log("Delete Objects from the Database")}>Remove Objects</Anchor>
-                    </Box>
-                </Sidebar>
-            </Collapsible>
         </Box>
     )
 }

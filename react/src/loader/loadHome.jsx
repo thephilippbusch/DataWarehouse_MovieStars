@@ -3,7 +3,7 @@ import React from 'react';
 // import axios from 'axios';
 import Home from '../pages/home';
 
-const LoadHome = () => {
+const LoadHome = (props) => {
     // const [data, setData] = useState({ fetched: null, isFetching: false });
     // const apiKey = TMDB_API_KEY;
 
@@ -29,7 +29,7 @@ const LoadHome = () => {
     // )
 
     return (
-        <Home />
+        <Home status={props.status}/>
     )
 }
 

@@ -1,19 +1,20 @@
 import React from 'react';
+
 import {
-    Switch,
     Route,
+    Switch,
     useHistory,
     useRouteMatch
 } from 'react-router-dom';
 
-import {
-    Box, 
+import { 
     Heading,
-    Collapsible
-} from 'grommet';
+    Box,
+    Collapsible,
+ } from 'grommet';
 
-import RevenueCalculator from './homepages/revenueCalc';
-import PopularityCalculator from './homepages/popularityCalc';
+import SearchAll from './searchpages/searchAll';
+import SearchActing from './searchpages/searchActing';
 
 const ClickBox = (props) => {
     const history = useHistory()
@@ -30,7 +31,7 @@ const ClickBox = (props) => {
     )
 }
 
-const Home = (props) => {
+const Search = (props) => {
     let {path, url} = useRouteMatch()
 
     return (
@@ -38,13 +39,13 @@ const Home = (props) => {
             <Collapsible direction="horizontal" open={props.status}>
                 <Box width="medium" background="background-contrast" fill="vertical">
                     <ClickBox 
-                        name='Create Revenue Calculation' 
-                        path='create-revenue-calc'
+                        name='Search All' 
+                        path='search-all'
                         url={url}
                     />
                     <ClickBox 
-                        name='Create Popularity Calculation'
-                        path='create-popularity-calc'
+                        name='Search Acting'
+                        path='search-acting'
                         url={url}
                     />
                 </Box>
@@ -52,14 +53,14 @@ const Home = (props) => {
             <Box margin={{left: "medium"}}>
                 <Switch>
                     <Route exact path={path}>
-                        <Heading level="5">This is the Homepage!</Heading>
+                        <Heading level="5">On this page you can Search the DB!</Heading>
                     </Route>
 
-                    <Route path={`${path}/create-revenue-calc`}>
-                        <RevenueCalculator />
+                    <Route path={`${path}/search-all`}>
+                        <SearchAll />
                     </Route>
-                    <Route path={`${path}/create-popularity-calc`}>
-                        <PopularityCalculator />
+                    <Route path={`${path}/search-acting`}>
+                        <SearchActing />
                     </Route>
                 </Switch>
             </Box>
@@ -67,4 +68,4 @@ const Home = (props) => {
     )
 }
 
-export default Home;
+export default Search;

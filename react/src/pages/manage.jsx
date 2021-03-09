@@ -1,19 +1,19 @@
 import React from 'react';
-import {
-    Switch,
-    Route,
-    useHistory,
-    useRouteMatch
-} from 'react-router-dom';
 
-import {
-    Box, 
+import { 
     Heading,
+    Box,
     Collapsible
 } from 'grommet';
+import {
+    Route,
+    Switch,
+    useHistory,
+    useRouteMatch
+} from 'react-router';
 
-import RevenueCalculator from './homepages/revenueCalc';
-import PopularityCalculator from './homepages/popularityCalc';
+import AddActing from './managepages/addActing';
+import UpdateActing from './managepages/updateActing';
 
 const ClickBox = (props) => {
     const history = useHistory()
@@ -30,21 +30,21 @@ const ClickBox = (props) => {
     )
 }
 
-const Home = (props) => {
-    let {path, url} = useRouteMatch()
+const ManageDB = (props) => {
+    let {path, url} = useRouteMatch();
 
     return (
         <Box direction="row" justify="start" height="91vh">
             <Collapsible direction="horizontal" open={props.status}>
                 <Box width="medium" background="background-contrast" fill="vertical">
                     <ClickBox 
-                        name='Create Revenue Calculation' 
-                        path='create-revenue-calc'
+                        name='Add new Acting' 
+                        path='add-acting'
                         url={url}
                     />
                     <ClickBox 
-                        name='Create Popularity Calculation'
-                        path='create-popularity-calc'
+                        name='Update Acting'
+                        path='update-acting'
                         url={url}
                     />
                 </Box>
@@ -52,14 +52,14 @@ const Home = (props) => {
             <Box margin={{left: "medium"}}>
                 <Switch>
                     <Route exact path={path}>
-                        <Heading level="5">This is the Homepage!</Heading>
+                        <Heading level="5">On this page you can Manage the DB!</Heading>
                     </Route>
 
-                    <Route path={`${path}/create-revenue-calc`}>
-                        <RevenueCalculator />
+                    <Route path={`${path}/add-acting`}>
+                        <AddActing />
                     </Route>
-                    <Route path={`${path}/create-popularity-calc`}>
-                        <PopularityCalculator />
+                    <Route path={`${path}/update-acting`}>
+                        <UpdateActing />
                     </Route>
                 </Switch>
             </Box>
@@ -67,4 +67,4 @@ const Home = (props) => {
     )
 }
 
-export default Home;
+export default ManageDB;

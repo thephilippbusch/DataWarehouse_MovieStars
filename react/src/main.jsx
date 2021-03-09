@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom';
 import styled from 'styled-components';
-import { Grommet } from 'grommet';
+import { Grommet, Main as MainContent } from 'grommet';
 import { global } from './styles/globalStylings';
 
 import LoadHome from './loader/loadHome';
+import Profile from './pages/profile';
+
+import Login from './pages/login';
+import Loader from './components/loader';
 import NavBar from './components/navbar';
-import About from './pages/about';
-import News from './pages/news';
 import SideBar from './components/sidebar';
 import Footer from './components/footer';
+
+import { AuthContext } from './auth/auth';
+// import PrivateRoute from './auth/privateRoute';
+
+import ManageDB from './pages/manage';
+import Search from './pages/search';
+
+// const LoadHome = lazy(() => import('./loader/loadHome'))
+// const Profile = lazy(() => import('./pages/profile'))
 
 const MainContainer = styled.div`
   height: 91vh;
@@ -31,35 +43,54 @@ const Main = () => {
   );
   const [sidebarStatus, setSidebarStatus] = useState(false);
 
+  const existingToken = localStorage.getItem('token');
+  const [authToken, setAuthToken] = useState(existingToken);
+
+  const setToken = (data) => {
+    localStorage.setItem('token', data);
+    setAuthToken(data);
+  }
+
   return (
-    <Grommet theme={global} themeMode={themeSetting}>
-      <Router>
-        <NavBar 
-          currentTheme={themeSetting}
-          setGlobalTheme={option => setThemeSetting(option)}
-          sidebarStatus={sidebarStatus}
-          setSidebarStatus={status =>setSidebarStatus(status)}
-        />
-        
-        <MainContainer>
-          <SideBar status={sidebarStatus}/>
+    <AuthContext.Provider value={{ authToken, setAuthToken: setToken }}>
+      <Grommet theme={global} themeMode={themeSetting}>
+        <Router>
+          <Route path='/:page' render={({ match }) => 
+            <NavBar 
+              page={match}
+              sidebarStatus={sidebarStatus}
+              setSidebarStatus={status => setSidebarStatus(status)}
+            />
+          }>
+            
+          </Route>
 
-          <Switch>
-            <Route exact path="/">
-              <LoadHome />
-            </Route>
-            <Route path="/about">
-              <About />
-            </Route>
-            <Route path="/news">
-              <News />
-            </Route>
-          </Switch>
-        </MainContainer>
+          <MainContainer >
+            <Route path='/:page' render={({ match }) => <SideBar page={match} setSidebarStatus={status => setSidebarStatus(status)}/>}/>
+            <MainContent>
+              <Suspense fallback={() => <Loader />}>
+                <Switch>
+                  <Route path='/login'><Login /></Route>
+                  {/* <PrivateRoute path="/profile" component={Profile}/> */}
+                  <Route path='/profile'>
+                    <Profile
+                      currentTheme={themeSetting}
+                      setGlobalTheme={option => setThemeSetting(option)}
+                    />
+                  </Route>
+                  <Route path='/manage'><ManageDB status={sidebarStatus}/></Route>
+                  <Route path='/search'><Search status={sidebarStatus}/></Route>
+                  <Route path='/home'><LoadHome status={sidebarStatus}/></Route>
+                  <Route exact path='/'><Redirect to='/home'/></Route>
+                </Switch>
+              </Suspense>
+            </MainContent>
+          </MainContainer>
 
-        <Footer />
-      </Router>
-    </Grommet>
+          <Footer />
+        </Router>
+      </Grommet>
+    </AuthContext.Provider>
   );
 }
 
