@@ -52,7 +52,7 @@ const Home = (props) => {
             <Box margin={{left: "medium"}}>
                 <Switch>
                     <Route exact path={path}>
-                        <Heading level="5">This is the Homepage!</Heading>
+                        <Heading level="5">This is the Clara Page!</Heading>
                     </Route>
 
                     <Route path={`${path}/create-revenue-calc`}>
