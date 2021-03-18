@@ -1,51 +1,63 @@
 from fastapi import FastAPI
-from graphene import ObjectType, List, String, Schema, Field, Mutation
+from fastapi.middleware.cors import CORSMiddleware
+from graphene import ObjectType, List, String, Schema, Field, Mutation, Int, Float, List
 from graphql.execution.executors.asyncio import AsyncioExecutor
 from starlette.graphql import GraphQLApp
-from schemas import CourseType
+from schemas import CourseType, MovieType
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch()
+from .movies import MovieQuery, MovieMutation
+from .people import PeopleQuery, PersonMutation, CheckPeople
+from .courses import CourseQuery, CourseMutation, CheckCourses
+from .companies import CompanyQuery, CompanyMutation
+from .test import TestQuery, TestMutation
+
 app = FastAPI()
 
-class Query(ObjectType):
-    course_list = None
-    get_course = Field(List(CourseType), id=String())
-    async def resolve_get_course(self, info, id=None):
-        course_list = []
-        res = es.search(index="courses", body={"query": {"match_all": {}}})
-        for hit in res['hits']['hits']:
-            course_list.append(hit['_source'])
-        if(id):
-            for course in course_list:
-                if course['id'] == id: return [course] 
-        return course_list
-        
-class CreateCourse(Mutation):
-    course = Field(CourseType)
+origins=[
+    'localhost:3000',
+    'http://localhost:3000'
+]
 
-    class Arguments:
-        id = String(required=True)
-        title = String(required=True)
-        instructor = String(required=True)
-    
-    async def mutate(self, info, id, title, instructor):
-        res = es.search(index="courses", body={"query": {"match_all": {}}})
-        es_id = res['hits']['total']['value']
-        new_course = {
-            'id': id,
-            'title': title,
-            'instructor': instructor
-        }
-        res = es.index(index="courses", id=es_id, body=new_course)
-        return CreateCourse(new_course)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class Mutation(ObjectType):
-  create_course = CreateCourse.Field()
-
-
-app.add_route("/", GraphQLApp(
-    schema=Schema(query=Query, mutation=Mutation),
+app.add_route("/courses", GraphQLApp(
+    schema=Schema(query=CourseQuery, mutation=CourseMutation),
     executor_class=AsyncioExecutor
 ))
 
+app.add_route("/check-courses", GraphQLApp(
+    schema=Schema(query=CheckCourses),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/movies", GraphQLApp(
+    schema=Schema(query=MovieQuery, mutation=MovieMutation),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/people", GraphQLApp(
+    schema=Schema(query=PeopleQuery, mutation=PersonMutation),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/check-people", GraphQLApp(
+    schema=Schema(query=CheckPeople),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/companies", GraphQLApp(
+    schema=Schema(query=CompanyQuery, mutation=CompanyMutation),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/test", GraphQLApp(
+    schema=Schema(query=TestQuery, mutation=TestMutation),
+    executor_class=AsyncioExecutor
+))
