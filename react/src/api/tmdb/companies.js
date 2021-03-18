@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { TMDB_API_KEY } from '../../config';
+import { TMDB_API_KEY, GRAPHQL_BASE_URL } from '../../config';
+import { GraphQLClient, gql } from 'graphql-request';
 
 export const searchCompanies = async (query, page) => {
     try {
@@ -9,4 +10,43 @@ export const searchCompanies = async (query, page) => {
         console.error(e)
         return null
     }
+}
+
+export const checkCompanyExists = async (id) => {
+    try {
+        const gqlClient = new GraphQLClient(`${GRAPHQL_BASE_URL}/check-companies`)
+
+        const query = gql`
+            {
+                checkCompany(id: ${id})
+            }
+        `;
+
+        const response = await gqlClient.request(query);
+
+        return response;
+    } catch(e) {
+        console.error(e)
+        return null
+    }
+}
+
+export const addCompany = async (payload) => {
+    const gqlClient = new GraphQLClient(`${GRAPHQL_BASE_URL}/companies`)
+
+    const mutation = gql`
+        mutation {
+            addCompany(id: ${payload.id}, name: "${payload.name}") {
+                company {
+                    id
+                    name
+                }
+            }
+        }
+    `;
+
+    const response = await gqlClient.request(mutation);
+    console.log(response)
+
+    return response;
 }

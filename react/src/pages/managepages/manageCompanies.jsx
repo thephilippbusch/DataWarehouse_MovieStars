@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -7,17 +7,21 @@ import {
     Button,
     Heading,
     Text,
-    Image
+    Image,
+    Card,
+    Stack
 } from 'grommet'
 
 import {
     AddCircle as AddCircleIcon,
     Search as SearchIcon,
-    Trash as TrashIcon
+    Trash as TrashIcon,
+    Alert,
+    Checkmark
 } from 'grommet-icons'
-import Spinner from '../../components/spinner'
 
-import { searchCompanies } from '../../api/tmdb/companies'
+import Loader from '../../components/loader'
+import { searchCompanies, checkCompanyExists, addCompany as addCompanyToES } from '../../api/tmdb/companies'
 
 const ResultContainer = styled.div`
     width: 80%; 
@@ -28,10 +32,56 @@ const ResultContainer = styled.div`
 
 const Result = (props) => {
     const logoPath = `https://image.tmdb.org/t/p/w200/${props.company.logo_path}`;
-    const [notExisting, setNotExisting] = useState(true);
+    const [existing, setExisting] = useState(false);
+    const [loadAdding, setAddLoading] = useState(false);
+    const [showConfirmationCard, setShowConfirmationCard] = useState({ show: false, msg: '', color: ''});
+
+    useEffect(() => {
+        try {
+            checkCompanyExists(props.company.id)
+                .then(res => {
+                    console.log(res)
+                    if(res) {
+                        if(res.checkCompany) {
+                            setExisting(true)
+                        } else {
+                            setExisting(false)
+                        }
+                    }
+                })
+        } catch(e) {
+            console.error(e)
+        }
+    }, [props.company])
 
     const addCompany = () => {
-        console.log(props.company.id);
+        setAddLoading(true)
+        try {
+            const payload = {
+                id: props.company.id,
+                name: props.company.name,
+            }
+
+            addCompanyToES(payload)
+                .then(gqlres => {
+                    if(gqlres.addCompany) {
+                        setExisting(true)
+                        setShowConfirmationCard({ show: true, msg: `'${payload.name}' was successfully added to the database`, color: 'status-ok' })
+                        setTimeout(() => {
+                            setShowConfirmationCard({ show: false, msg: '', color: '' })
+                        }, 10000)
+                    } else {
+                        setShowConfirmationCard({ show: true, msg: `'${payload.name}' already exists in the database`, color: 'status-critical' })
+                        setTimeout(() => {
+                            setShowConfirmationCard({ show: false, msg: '', color: '' })
+                        }, 3000)
+                    }
+                    setAddLoading(false)
+                })
+        } catch(e) {
+            console.error(e)
+            setAddLoading(false)
+        } 
     }
 
     const removeCompany = () => {
@@ -39,54 +89,93 @@ const Result = (props) => {
     }
 
     return (
-        <Box 
-            direction="row" 
-            justify="between" 
-            align="center"
-            height="210px" 
-            gap="small" 
-            pad="small"
-            border="top"
-            width={{min: "large"}}
-        >
-            <Box direction="row" justify="start">
-                <Box height="small" width="130px" border="all">
-                    <Image
-                        fit="contain"
-                        src={logoPath}
-                    />
+        <Stack>
+            {showConfirmationCard.show && (
+                <Box 
+                    direction="row" 
+                    justify="center" 
+                    align="center"
+                    height="210px" 
+                    gap="small" 
+                    pad="small"
+                    border="top"
+                    animation={{type: "fadeOut", delay: 2000}}
+                    width={{min: "large"}}
+                >
+                    <Card 
+                        direction="row" 
+                        justify="around" 
+                        width="medium"
+                        pad="medium"
+                        round="small"
+                        align="center"
+                        background={showConfirmationCard.color}
+                    >
+                        {showConfirmationCard.color === "status-ok" ? (
+                            <Checkmark color="light-1"/>
+                        ) : (
+                            <Alert color="light-1" />
+                        )}
+                        <Text margin={{left: "medium"}} color="light-1">{showConfirmationCard.msg}</Text>
+                    </Card>
                 </Box>
-                <Box fill="vertical" >
-                    <Heading level="4" margin="small">{props.company.name}</Heading>
-                    <Text margin={{horizontal: "small"}}>{props.company.id}</Text>
+            )}
+            <Box 
+                direction="row" 
+                justify="between" 
+                align="center"
+                height="210px" 
+                gap="small" 
+                pad="small"
+                border="top"
+                width={{min: "large"}}
+            >
+                <Box direction="row" justify="start">
+                    <Box height="small" width="130px" border="all">
+                        <Image
+                            fit="contain"
+                            src={logoPath}
+                        />
+                    </Box>
+                    <Box fill="vertical" >
+                        <Heading level="4" margin="small">{props.company.name}</Heading>
+                        <Text margin={{horizontal: "small"}}>{props.company.id}</Text>
+                    </Box>
+                </Box>
+                <Box justify="end" fill="vertical">
+                    <Box direction="column" justify="end" gap="small">
+                        <Button 
+                            primary 
+                            icon={<TrashIcon />} 
+                            label="Remove"
+                            onClick={() => removeCompany()}
+                            color="status-critical"
+                            disabled={!existing}
+                        />
+                        {loadAdding ? (
+                            <Loader size="component"/>
+                        ) : (
+                            <Button 
+                                primary 
+                                icon={<AddCircleIcon />} 
+                                label="Add"
+                                onClick={() => addCompany()}
+                                disabled={existing}
+                            />
+                        )}
+                    </Box>
                 </Box>
             </Box>
-            <Box justify="end" fill="vertical">
-                <Box direction="column" justify="end" gap="small">
-                <Button 
-                        primary 
-                        icon={<TrashIcon />} 
-                        label="Remove"
-                        onClick={() => removeCompany()}
-                        color="status-critical"
-                        disabled={notExisting}
-                    />
-                    <Button 
-                        primary 
-                        icon={<AddCircleIcon />} 
-                        label="Add"
-                        onClick={() => addCompany()}
-                    />
-                </Box>
-            </Box>
-        </Box>  
+        </Stack>
     )
 }
 
 const SearchResults = (props) => {
+    const companies = props.data.sort((a, b) => {return(a.id - b.id)})
+
     return (
         <Box fill="horizontal">
-            {props.data.map((company, index) => {
+            {companies.map((company, index) => {
                 return(
                     <Result key={index} company={company} />
                 )
@@ -168,7 +257,7 @@ const ManageCompanies = () => {
             </Box>
             <ResultContainer>
                 {loadingResult ? (
-                    <Spinner size="component"/>
+                    <Loader size="component"/>
                 ) : (
                     resultContainer ? (
                         resultContainer

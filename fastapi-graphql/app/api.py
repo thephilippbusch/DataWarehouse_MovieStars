@@ -7,9 +7,9 @@ from schemas import CourseType, MovieType
 from elasticsearch import Elasticsearch
 
 from .movies import MovieQuery, MovieMutation
-from .people import PeopleQuery, PersonMutation, CheckPeople
+from .people import PeopleQuery, PersonMutation, CheckPeople, DeletePersonMutation
 from .courses import CourseQuery, CourseMutation, CheckCourses
-from .companies import CompanyQuery, CompanyMutation
+from .companies import CompanyQuery, CompanyMutation, CheckCompany
 from .test import TestQuery, TestMutation
 
 app = FastAPI()
@@ -52,8 +52,18 @@ app.add_route("/check-people", GraphQLApp(
     executor_class=AsyncioExecutor
 ))
 
+app.add_route("/delete-person", GraphQLApp(
+    schema=Schema(mutation=DeletePersonMutation),
+    executor_class=AsyncioExecutor
+))
+
 app.add_route("/companies", GraphQLApp(
     schema=Schema(query=CompanyQuery, mutation=CompanyMutation),
+    executor_class=AsyncioExecutor
+))
+
+app.add_route("/check-companies", GraphQLApp(
+    schema=Schema(query=CheckCompany),
     executor_class=AsyncioExecutor
 ))
 

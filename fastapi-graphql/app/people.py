@@ -7,8 +7,8 @@ es = Elasticsearch()
 
 class PeopleQuery(ObjectType):
     people_list = None
-    get_people = Field(List(PersonType), id=String())
-    async def resolve_get_people(self, info, id=None):
+    get_people = Field(List(PersonType), id=String(), name=String(), knownForDep=String())
+    async def resolve_get_people(self, info, id=None, name=None, knownForDep=None):
         people_list = []
         
         res = es.search(
@@ -26,7 +26,21 @@ class PeopleQuery(ObjectType):
         if(id):
             for person in people_list:
                 if person['id'] == id: return [person]
-        
+
+        if(name):
+            filtered_people_list = []
+            for person in people_list:
+                if name in person['name']:
+                    filtered_people_list.append(person)
+            return filtered_people_list
+
+        if(knownForDep):
+            filtered_people_list
+            for person in people_list:
+                if person['known_for_dep'] == knownForDep: 
+                    filtered_people_list.append(person)
+            return filtered_people_list
+
         return people_list
 
 class CheckPeople(ObjectType):
@@ -114,3 +128,43 @@ class AddPerson(Mutation):
 
 class PersonMutation(ObjectType):
     add_person = AddPerson.Field()
+
+class DeletePerson(Mutation):
+    person = Field(PersonType)
+    deleted = None
+
+    class Arguments:
+        id: Int(required=True)
+
+    async def mutate(self, info, id):
+        deleted=False
+        
+        res = es.search(
+            index="people",
+            body={
+                "query": {
+                    "match": {
+                        "id": id
+                    }
+                }
+            }
+        )
+
+        if res['hits']['total']['value'] == 0:
+            raise Exception('Person already exists in Database!')
+
+        es_id = res['hits']['hits'][0]['_id']
+        res = es.delete(
+            index="people",
+            id=es_id
+        )
+
+        if res['result'] == 'deleted':
+            deleted = True
+        else:
+            deleted = False
+
+        return DeletePerson(deleted)
+
+class DeletePersonMutation(ObjectType):
+    delete_person = Field(PersonType)

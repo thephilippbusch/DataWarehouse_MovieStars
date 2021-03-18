@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { GraphQLClient, gql, request } from 'graphql-request';
-import axios from 'axios';
 
 import {
     Box,
@@ -66,7 +64,7 @@ const Result = (props) => {
                     }
                 })
         } catch(e) {
-            console.info(e)
+            console.error(e)
         }
     }, [props.person])
 
