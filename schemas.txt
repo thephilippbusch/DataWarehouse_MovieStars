@@ -1,0 +1,20 @@
+movie {
+    name,
+    id,
+    popularity,
+    budget,
+    revenue,
+    companies: [],
+    people: [],
+    genres: [],
+    language,
+    length
+}
+
+people {
+
+}
+
+companies {
+
+}

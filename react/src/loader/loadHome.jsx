@@ -1,35 +1,48 @@
-import React from 'react';
-// import Loader from '../components/loader.jsx';
-// import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { getCompanies } from '../api/graphql/companies';
+import { getPeopleByDepartment } from '../api/graphql/people';
+import Loader from '../components/loader.jsx';
 import Home from '../pages/home';
 
 const LoadHome = (props) => {
-    // const [data, setData] = useState({ fetched: null, isFetching: false });
-    // const apiKey = TMDB_API_KEY;
+    const [data, setData] = useState({ fetched: null, isFetching: false });
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try{
-    //             setData({ fetched: data, isFetching: true});
-    //             const response = await axios.get(`https://api.themoviedb.org/3/movie/27205?api_key=${apiKey}`);
-    //             console.log(response);
-    //             setData({ fetched: response.data, isFetching: false});
-    //         } catch(e) {
-    //             console.log(e);
-    //             setData({ fetched: data.fetched, isFetching: false});
-    //         }
-    //     }
-    //     fetchData();
-    // }, [apiKey]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                setData({ fetched: null, isFetching: true});
+                let suggestionData = {}
+                getPeopleByDepartment('acting')
+                    .then(actRes => {
+                        if(actRes) {
+                            suggestionData["acting"] = actRes.getPeople
+                            getPeopleByDepartment('directing')
+                                .then(dirRes => {
+                                    if(dirRes) {
+                                        suggestionData["directing"] = dirRes.getPeople
+                                        getCompanies()
+                                            .then(comRes => {
+                                                if(comRes) {
+                                                    suggestionData["companies"] = comRes.getCompanies
+                                                    setData({ fetched: suggestionData, isFetching: false })
+                                                }
+                                            })
+                                    }
+                                })
+                        }
+                    })
+            } catch(e) {
+                console.log(e);
+                setData({ fetched: data.fetched, isFetching: false});
+            }
+        }
+        fetchData();
+    }, []);
     
-    // return data.fetched && !data.isFetching ? (
-    //     <Home data={data.fetched} />
-    // ) : (
-    //     <Loader size="fullscreen" />
-    // )
-
-    return (
-        <Home status={props.status}/>
+    return data.fetched && !data.isFetching ? (
+        <Home data={data.fetched} />
+    ) : (
+        <Loader size="fullscreen" />
     )
 }
 

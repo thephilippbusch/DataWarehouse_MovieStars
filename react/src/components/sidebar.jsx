@@ -10,7 +10,7 @@ import {
 import {
     UserFemale as UserFemaleIcon,
     Home as HomeIcon,
-    Database as DatabaseIcon,
+    Server as ServerIcon,
     Search as SearchIcon
 } from 'grommet-icons';
 
@@ -51,7 +51,7 @@ const SideBar = (props) => {
                                 }}
                             >
                                 {option === 'home' && <HomeIcon />}
-                                {option === 'manage' && <DatabaseIcon />}
+                                {option === 'manage' && <ServerIcon />}
                                 {option === 'search' && <SearchIcon />}
                             </Box>
                         )

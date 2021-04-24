@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Spinner from './spinner';
+import { Spinner } from 'grommet'
 
 const FullScreen = styled.div`
     width: 100%;

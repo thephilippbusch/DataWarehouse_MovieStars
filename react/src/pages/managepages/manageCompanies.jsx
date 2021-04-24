@@ -21,7 +21,12 @@ import {
 } from 'grommet-icons'
 
 import Loader from '../../components/loader'
-import { searchCompanies, checkCompanyExists, addCompany as addCompanyToES } from '../../api/tmdb/companies'
+import { searchCompanies } from '../../api/tmdb/companies'
+import {
+    checkCompanyExists, 
+    addCompany as addCompanyToES,
+    removeCompany as removeCompanyFromES
+} from '../../api/graphql/companies'
 
 const ResultContainer = styled.div`
     width: 80%; 
@@ -31,18 +36,18 @@ const ResultContainer = styled.div`
 `;
 
 const Result = (props) => {
-    const logoPath = `https://image.tmdb.org/t/p/w200/${props.company.logo_path}`;
+    const logoPath = props.company.logo_path ? `https://image.tmdb.org/t/p/w200/${props.company.logo_path}` : null;
     const [existing, setExisting] = useState(false);
     const [loadAdding, setAddLoading] = useState(false);
+    const [loadRemoving, setRemoveLoading] = useState(false);
     const [showConfirmationCard, setShowConfirmationCard] = useState({ show: false, msg: '', color: ''});
 
     useEffect(() => {
         try {
             checkCompanyExists(props.company.id)
                 .then(res => {
-                    console.log(res)
                     if(res) {
-                        if(res.checkCompany) {
+                        if(res.checkCompany.doesExist) {
                             setExisting(true)
                         } else {
                             setExisting(false)
@@ -85,7 +90,30 @@ const Result = (props) => {
     }
 
     const removeCompany = () => {
-        console.log(props.company.id);
+        setRemoveLoading(true)
+        try{
+            removeCompanyFromES(props.company.id)
+                .then(res => {
+                    if(res) {
+                        if(res.deleteCompany.ok) {
+                            setExisting(false)
+                            setShowConfirmationCard({ show: true, msg: `'${props.company.name}' was successfully removed from the database`, color: 'status-ok' })
+                            setTimeout(() => {
+                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                            }, 3000)
+                        } else {
+                            setShowConfirmationCard({ show: true, msg: `'${props.company.name}' could not be removed from the database`, color: 'status-critical' })
+                            setTimeout(() => {
+                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                            }, 3000)
+                        }
+                    }
+                    setRemoveLoading(false)
+                })
+        } catch(e) {
+            console.error(e)
+            setRemoveLoading(false)
+        }
     }
 
     return (
@@ -131,11 +159,13 @@ const Result = (props) => {
                 width={{min: "large"}}
             >
                 <Box direction="row" justify="start">
-                    <Box height="small" width="130px" border="all">
-                        <Image
-                            fit="contain"
-                            src={logoPath}
-                        />
+                    <Box height="small" width="130px" border="all" background="light-1">
+                        {logoPath && (
+                            <Image
+                                fit="contain"
+                                src={logoPath}
+                            />
+                        )}
                     </Box>
                     <Box fill="vertical" >
                         <Heading level="4" margin="small">{props.company.name}</Heading>
@@ -144,14 +174,18 @@ const Result = (props) => {
                 </Box>
                 <Box justify="end" fill="vertical">
                     <Box direction="column" justify="end" gap="small">
-                        <Button 
-                            primary 
-                            icon={<TrashIcon />} 
-                            label="Remove"
-                            onClick={() => removeCompany()}
-                            color="status-critical"
-                            disabled={!existing}
-                        />
+                        {loadRemoving ? (
+                            <Loader size="component"/>
+                        ) : (
+                            <Button 
+                                primary 
+                                icon={<TrashIcon />} 
+                                label="Remove"
+                                onClick={() => removeCompany()}
+                                color="status-critical"
+                                disabled={!existing}
+                            />
+                        )}
                         {loadAdding ? (
                             <Loader size="component"/>
                         ) : (

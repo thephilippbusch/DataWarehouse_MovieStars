@@ -10,6 +10,8 @@ import { Grommet, Main as MainContent } from 'grommet';
 import { global } from './styles/globalStylings';
 
 import LoadHome from './loader/loadHome';
+import LoadPerson from './loader/loadPerson';
+
 import Profile from './pages/profile';
 
 import Login from './pages/login';
@@ -23,6 +25,7 @@ import { AuthContext } from './auth/auth';
 
 import ManageDB from './pages/manage';
 import Search from './pages/search';
+import Impressum from './pages/impressum';
 
 // const LoadHome = lazy(() => import('./loader/loadHome'))
 // const Profile = lazy(() => import('./pages/profile'))
@@ -80,7 +83,9 @@ const Main = () => {
                   </Route>
                   <Route path='/manage'><ManageDB status={sidebarStatus}/></Route>
                   <Route path='/search'><Search status={sidebarStatus}/></Route>
-                  <Route path='/home'><LoadHome status={sidebarStatus}/></Route>
+                  <Route path='/home'><LoadHome/></Route>
+                  <Route path='/impressum'><Impressum /></Route>
+                  <Route path='/person/:id' render={({ match }) => <LoadPerson match={match}/>}/>
                   <Route exact path='/'><Redirect to='/home'/></Route>
                 </Switch>
               </Suspense>

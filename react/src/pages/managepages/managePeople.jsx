@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
 
 import {
     Box,
@@ -27,18 +26,26 @@ import {
 import Loader from '../../components/loader'
 
 import { 
-    checkPersonExists, 
     getPersonDetails, 
-    searchPeople, 
-    addPerson as addPersonToES
+    searchPeople,
+    getMovieCredits
 } from '../../api/tmdb/people'
 
-const ResultContainer = styled.div`
-    width: 80%; 
-    height: 79vh; 
-    align-items: center; 
-    overflow-y: auto;
-`;
+import { 
+    getMovieDetails,
+    getMovieExternalIDs
+} from '../../api/tmdb/movies'
+
+import {
+    addPerson as addPersonToES,
+    deletePerson as deletePersonFromES,
+    checkPersonExists
+} from '../../api/graphql/people'
+
+import {
+    checkMovie as checkMovieInES,
+    addMovie as addMovieToES
+} from '../../api/graphql/movies'
 
 const defaultFilterValues = {
     role: "All",
@@ -46,9 +53,10 @@ const defaultFilterValues = {
 }
 
 const Result = (props) => {
-    const imgPath = `https://image.tmdb.org/t/p/w200/${props.person.profile_path}`;
+    const imgPath = props.person.profile_path ? `https://image.tmdb.org/t/p/w200/${props.person.profile_path}` : null;
     const [existing, setExisting] = useState(false);
     const [loadAdding, setAddLoading] = useState(false);
+    const [loadRemoving, setRemoveLoading] = useState(false);
     const [showConfirmationCard, setShowConfirmationCard] = useState({ show: false, msg: '', color: '' })
 
     useEffect(() => {
@@ -56,7 +64,7 @@ const Result = (props) => {
             checkPersonExists(props.person.id)
                 .then(res => {
                     if(res) {
-                        if(res.checkPeople) {
+                        if(res.checkPerson.doesExist) {
                             setExisting(true)
                         } else {
                             setExisting(false)
@@ -75,10 +83,8 @@ const Result = (props) => {
                 .then(res => {
                     if(res) {
                         if(res.status === 200) {
+                            console.log(res)
                             try {
-                                let popMovies = props.person.known_for.map(popMov => {
-                                    return popMov.id;
-                                });
                                 const payload = {
                                     id: res.data.id,
                                     imdbId: res.data.imdb_id,
@@ -87,24 +93,100 @@ const Result = (props) => {
                                     popularity: res.data.popularity,
                                     birthday: res.data.birthday,
                                     deathday: res.data.deathday,
-                                    popularMovieIDs: popMovies
+                                    imgPath: imgPath,
+                                    gender: res.data.gender
                                 }
-
-                                addPersonToES(payload)
-                                    .then(gqlres => {
-                                        if(gqlres.addPerson) {
-                                            setExisting(true)
-                                            setShowConfirmationCard({ show: true, msg: `'${payload.name}' was successfully added to the database`, color: 'status-ok' })
-                                            setTimeout(() => {
-                                                setShowConfirmationCard({ show: false, msg: '', color: '' })
-                                            }, 10000)
-                                        } else {
-                                            setShowConfirmationCard({ show: true, msg: `'${payload.name}' already exists in the database`, color: 'status-critical' })
-                                            setTimeout(() => {
-                                                setShowConfirmationCard({ show: false, msg: '', color: '' })
-                                            }, 3000)
+                                getMovieCredits(payload.id)
+                                    .then(res => {
+                                        if(res) {
+                                            let sortedMovielist = null;
+                                            if(payload.knownForDep === "Acting") {
+                                                sortedMovielist = res.data.cast.sort((a, b) => {
+                                                    return b.popularity - a.popularity
+                                                })
+                                            } else {
+                                                sortedMovielist = res.data.crew.filter(movie => movie.department === payload.knownForDep).sort((a, b) => {
+                                                    return b.popularity - a.popularity
+                                                })
+                                            }
+                                            if(sortedMovielist) {
+                                                let newMovieList = []
+                                                sortedMovielist.map((movie, index) => {
+                                                    if(index < 10) {
+                                                        newMovieList.push(movie.id)
+                                                    }
+                                                })
+                                                payload.popularMovieIDs = newMovieList
+                                                newMovieList.map(movie => {
+                                                    getMovieDetails(movie)
+                                                        .then(res => {
+                                                            if(res) {
+                                                                let productionComps = res.data.production_companies.map(company => {
+                                                                    return {
+                                                                        id: company.id,
+                                                                        name: company.name
+                                                                    }
+                                                                })
+                                
+                                                                let payload = {
+                                                                    title: res.data.title,
+                                                                    id: res.data.id,
+                                                                    imdbId: res.data.imdb_id,
+                                                                    budget: res.data.budget,
+                                                                    revenue: res.data.revenue,
+                                                                    runtime: res.data.runtime,
+                                                                    popularity: res.data.popularity,
+                                                                    vote: res.data.vote_average,
+                                                                    voteCount: res.data.vote_count,
+                                                                    genres: res.data.genres,
+                                                                    productionCompanies: productionComps
+                                                                }
+                                
+                                                                getMovieExternalIDs(movie)
+                                                                    .then(res => {
+                                                                        if(res) {
+                                                                            payload.twitter_id = res.data.twitter_id
+                                                                            checkMovieInES(payload.id)
+                                                                                .then(res => {
+                                                                                    if(res) {
+                                                                                        if(!res.checkMovie.doesExist) {
+                                                                                            addMovieToES(payload)
+                                                                                                .then(res => {
+                                                                                                    if(res) {
+                                                                                                        console.log(res)
+                                                                                                    } else {
+                                                                                                        console.error("Something went wrong!")
+                                                                                                    }
+                                                                                                })
+                                                                                        } else {
+                                                                                            console.log("Movie already exists in ES")
+                                                                                        }
+                                                                                    }
+                                                                                })
+                                                                        }
+                                                                    })
+                                                            }
+                                                            
+                                                        })
+                                                })
+                                                addPersonToES(payload)
+                                                    .then(gqlres => {
+                                                        if(gqlres.addPerson) {
+                                                            setExisting(true)
+                                                            setShowConfirmationCard({ show: true, msg: `'${payload.name}' was successfully added to the database`, color: 'status-ok' })
+                                                            setTimeout(() => {
+                                                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                                                            }, 3000)
+                                                        } else {
+                                                            setShowConfirmationCard({ show: true, msg: `'${payload.name}' already exists in the database`, color: 'status-critical' })
+                                                            setTimeout(() => {
+                                                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                                                            }, 3000)
+                                                        }
+                                                        setAddLoading(false)
+                                                })
+                                            }
                                         }
-                                        setAddLoading(false)
                                     })
                             } catch(e) {
                                 console.error(e)
@@ -123,7 +205,30 @@ const Result = (props) => {
     }
 
     const removePerson = () => {
-        console.log(props.person.id);
+        setRemoveLoading(true)
+        try{
+            deletePersonFromES(props.person.id)
+                .then(res => {
+                    if(res) {
+                        if(res.deletePerson.ok) {
+                            setExisting(false)
+                            setShowConfirmationCard({ show: true, msg: `'${props.person.name}' was successfully removed from the database`, color: 'status-ok' })
+                            setTimeout(() => {
+                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                            }, 3000)
+                        } else {
+                            setShowConfirmationCard({ show: true, msg: `'${props.person.name}' could not be removed from the database`, color: 'status-critical' })
+                            setTimeout(() => {
+                                setShowConfirmationCard({ show: false, msg: '', color: '' })
+                            }, 3000)
+                        }
+                    }
+                    setRemoveLoading(false)
+                })
+        } catch(e) {
+            console.error(e)
+            setRemoveLoading(false)
+        }
     }
 
     return (
@@ -170,10 +275,12 @@ const Result = (props) => {
             >
                 <Box direction="row" justify="start">
                     <Box height="small" width="130px" border="all">
-                        <Image
-                            fit="contain"
-                            src={imgPath}
-                        />
+                        {imgPath && (
+                            <Image
+                                fit="contain"
+                                src={imgPath}
+                            />
+                        )}
                     </Box>
                     <Box fill="vertical" >
                         <Heading level="4" margin="small">{props.person.name}</Heading>
@@ -182,14 +289,18 @@ const Result = (props) => {
                 </Box>
                 <Box justify="end" fill="vertical">
                     <Box direction="column" justify="end" gap="small">
-                        <Button 
-                            primary 
-                            icon={<TrashIcon />} 
-                            label="Remove"
-                            onClick={() => removePerson()}
-                            color="status-critical"
-                            disabled={!existing}
-                        />
+                        {loadRemoving ? (
+                            <Loader size="component"/>
+                        ) : (
+                            <Button 
+                                primary 
+                                icon={<TrashIcon />} 
+                                label="Remove"
+                                onClick={() => removePerson()}
+                                color="status-critical"
+                                disabled={!existing}
+                            />
+                        )}
                         {loadAdding ? (
                             <Loader size="component"/>
                         ) : (
@@ -248,7 +359,7 @@ const ManagePeople = () => {
                             } else {
                                 setResultContainer(
                                     <Box fill="vertical" align="center">
-                                        <Heading level="5" color="status-warning" textAlign="center">No Actor/Actress with the name '{searchEntry}' was found!</Heading>
+                                        <Heading level="5" color="status-warning" textAlign="center">No Person with the name '{searchEntry}' was found!</Heading>
                                     </Box>
                                 )
                             }
@@ -368,7 +479,7 @@ const ManagePeople = () => {
             <Box fill="horizontal" align="center">
                 <Text color="status-critical">{loadError}</Text>
             </Box>
-            <ResultContainer>
+            <Box width="80%" height="79vh" align="center" overflow={{vertical: "auto"}}>
                 {loadingResult ? (
                     <Loader size="component"/>
                 ) : (
@@ -385,7 +496,7 @@ const ManagePeople = () => {
                         <Button label="Load More" onClick={() => loadNextPage()}/>
                     </Box>
                 )} */}
-            </ResultContainer>
+            </Box>
         </Box>
     )
 }
