@@ -23,8 +23,8 @@ import {
 } from 'grommet-icons'
 
 const sampleUser = {
-    email: "philippleonbusch@gmail.com",
-    name: "Phillex",
+    email: "sample@user.com",
+    name: "User",
     password: "1234"
 }
 

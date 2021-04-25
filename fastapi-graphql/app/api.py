@@ -14,6 +14,7 @@ app = FastAPI()
 
 origins=[
     'moviestar-dashboard.herokuapp.com',
+    'http://moviestar-dashboard.herokuapp.com',
     'https://moviestar-dashboard.herokuapp.com',
     'localhost:3000',
     'http://localhost:3000'

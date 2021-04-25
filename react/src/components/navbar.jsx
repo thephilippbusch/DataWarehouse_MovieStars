@@ -6,12 +6,13 @@ import {
     Header,
     Box,
     Anchor,
-    Image
+    Heading
 } from 'grommet';
 
 import {
     Menu as MenuIcon,
-    Close as CloseIcon
+    Close as CloseIcon,
+    Multimedia as MovieIcon
 } from 'grommet-icons';
 
 const Title = styled.h2`
@@ -43,12 +44,7 @@ const NavBar = (props) => {
                 </Box>
                 <Title>
                     <TitleLink to="/home">
-                        <Box height="small" width="small">
-                            <Image
-                                fit="contain"
-                                src="moviestars-logo.png"
-                            />
-                        </Box>
+                        <Heading color="brand" level="3" margin={{horizontal: "small"}}>MOVIESTAR <MovieIcon size="medium"/></Heading>
                     </TitleLink>
                 </Title>
             </Box>
