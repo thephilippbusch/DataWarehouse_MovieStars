@@ -19,7 +19,7 @@ You can use the live version of the app via <https://moviestar-dashboard.herokua
 
 ### Setup Working Space
 
-Setup your Workspace by cloning this Repository via ssh or http (<https://github.com/thephilippbusch/DataWarehouse_MovieStars>).
+Setup your Workspace by cloning this Repository via ssh (<git@github.com:thephilippbusch/DataWarehouse_MovieStars.git>) or https (<https://github.com/thephilippbusch/DataWarehouse_MovieStars>).
 
 
 #### FastAPI GraphQL Server
