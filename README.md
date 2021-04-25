@@ -1,6 +1,6 @@
 # Moviestar Data Warehouse
 
-A Website to calculate the outcome of your Movie based on Actors/Actresses, Directors/Directresses, Production Companies, Social Media Presence, etc.
+An application to calculate the outcome of your Movie based on Actors/Actresses, Directors/Directresses, Production Companies, Social Media Presence, etc.
 
 
 ## How to use it?
