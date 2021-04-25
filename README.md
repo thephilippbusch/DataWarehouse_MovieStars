@@ -10,11 +10,11 @@ You can use the live version of the app via <https://moviestar-dashboard.herokua
 
 ### Prerequisites
 
-+ [Node.js] (https://nodejs.org/en/download/ "Download Node.js")
-+ [Python3] (https://www.python.org/downloads/ "Download Python")
-+ [ElasticSearch] (https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html "Installing ElasticSearch")
-+ [Twitter API Token] (https://developer.twitter.com/en/apply-for-access "Create Twitter Developer Account")
-+ [TMDB API Token] (https://www.themoviedb.org/signup "Create TMDB Account")
++ [Node.js](https://nodejs.org/en/download/ "Download Node.js")
++ [Python3](https://www.python.org/downloads/ "Download Python")
++ [ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html "Installing ElasticSearch")
++ [Twitter API Token](https://developer.twitter.com/en/apply-for-access "Create Twitter Developer Account")
++ [TMDB API Token](https://www.themoviedb.org/signup "Create TMDB Account")
 
 
 ### Setup Working Space
@@ -79,7 +79,7 @@ Now you can run your app via
 npm start
 ```
 
-and head to your browser at [localhost:3000] (http://localhost:3000).
+and head to your browser at [localhost:3000](http://localhost:3000).
 
 You should now be able to see the React Dashboard on your localhost and start creating your own Moviestar :sparkles:!
 
