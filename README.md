@@ -2,9 +2,11 @@
 
 A Website to calculate the outcome of your Movie based on Actors/Actresses, Directors/Directresses, Production Companies, Social Media Presence, etc.
 
+
 ## How to use it?
 
 You can use the live version of the app via <https://moviestar-dashboard.herokuapp.com/home> or clone this repo to create your own development server. The next steps explain how to do so:
+
 
 ### Prerequisites
 
@@ -14,9 +16,11 @@ You can use the live version of the app via <https://moviestar-dashboard.herokua
 + [Twitter API Token] (https://developer.twitter.com/en/apply-for-access "Create Twitter Developer Account")
 + [TMDB API Token] (https://www.themoviedb.org/signup "Create TMDB Account")
 
+
 ### Setup Working Space
 
 Setup your Workspace by cloning this Repository via ssh or http (<https://github.com/thephilippbusch/DataWarehouse_MovieStars>).
+
 
 #### FastAPI GraphQL Server
 
@@ -51,6 +55,7 @@ Finally, you should be able to start your development API Server through this co
 python main.py
 ```
 
+
 #### React Dashboard App
 
 To start your React Frontend development server, navigate to the _/react_ folder. Now install all required node packages via:
@@ -78,10 +83,7 @@ and head to your browser at [localhost:3000] (http://localhost:3000).
 
 You should now be able to see the React Dashboard on your localhost and start creating your own Moviestar :sparkles:!
 
+
 ## Understanding your Results
 
-coming soon
-
-## How to access our API
-
-coming soon
+The Moviestar calculation result is formed by different factors of both the TMDB movie data as well as Twitter follower counts. One factor is sampled by the relation of a movies revenue to its budget. Taking the average of the 10 most popular movies of Actors/Actresses and Directors/Directresses as well as each movie related to the selected production companies, we create the first factor. The other one is gathered by the average of the twitter follower of each movie and the relation of each follower count to the calculated average. Those two combined will be multiplied to the used budget and will create the final calculated revenue. More details of the calculation can be retrieved from the documentation.
